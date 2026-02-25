@@ -963,6 +963,22 @@ async function loadProjects(){
   populateSiteDropdown();     // show in form dropdown
   refreshDash();
 }
+  async function loadTransactions(){
+
+  try{
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec?action=getTransactions");
+    const data = await res.json();
+
+    txns = data || [];
+
+    renderTabs();
+    refreshDash();
+    renderReports();
+
+  }catch(err){
+    console.log("Transaction load failed", err);
+  }
+}
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
