@@ -503,12 +503,12 @@ const CAT = {
 
 let projects = JSON.parse(localStorage.getItem('aipl_projects') || '[]');
 let activeProjectId = parseInt(localStorage.getItem('aipl_active_proj')) || (projects[0]?.id ?? null);
-let txns = JSON.parse(localStorage.getItem('aipl_txns') || '[]');
+let txns = [];
 let repPeriod = 'week';
 let repFrom = null, repTo = null;
 
 function saveProjects() { localStorage.setItem('aipl_projects', JSON.stringify(projects)); }
-function saveTxns()     { localStorage.setItem('aipl_txns', JSON.stringify(txns)); }
+
 function saveActive()   { localStorage.setItem('aipl_active_proj', activeProjectId); }
 
 function activeProject() { return projects.find(p => p.id === activeProjectId) || projects[0]; }
@@ -754,6 +754,7 @@ async function doSubmit() {
   ).catch(()=>{});
 
   showToast('✓ Voucher Saved / जतन झाले');
+  setTimeout(loadTransactions,1500);
   btn.disabled = false;
   document.getElementById('btntxt').textContent = 'Submit Voucher / जतन करा';
   document.getElementById('spn').style.display  = 'none';
