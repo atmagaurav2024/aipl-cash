@@ -612,18 +612,28 @@ function selectProjModal(id) {
   renderProjModal(); renderTabs(); refreshDash();
 }
 
-function addProject() {
+async function addProject(){
+
   const name = document.getElementById('new-proj-name').value.trim();
   const addr = document.getElementById('new-proj-addr').value.trim();
-  if (!name) { showToast('Enter project name', true); return; }
-  const id = Date.now();
-  projects.push({ id, name, addr });
-  saveProjects();
-  activeProjectId = id; saveActive();
-  document.getElementById('new-proj-name').value = '';
-  document.getElementById('new-proj-addr').value = '';
-  renderProjModal(); renderTabs(); refreshDash();
-  showToast('✓ Project added');
+
+  if(!name){
+    showToast('Enter project name', true);
+    return;
+  }
+
+  const url = "https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec?action=addProject&name=" 
+              + encodeURIComponent(name) +
+              "&addr=" + encodeURIComponent(addr);
+
+  await fetch(url);
+
+  showToast('✓ Project saved');
+
+  document.getElementById('new-proj-name').value='';
+  document.getElementById('new-proj-addr').value='';
+
+  loadProjects();   // reload from sheet
 }
 
 // ═══════════════════════════════════════════════
