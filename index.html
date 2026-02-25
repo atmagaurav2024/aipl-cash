@@ -946,7 +946,23 @@ function scrollActiveTabIntoView(){
   if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
+async function loadProjects(){
 
+  const res = await fetch("https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec?action=getProjects");
+  const data = await res.json();
+
+  projects = data;            // take projects from sheet
+  saveProjects();
+
+  if(projects.length>0){
+    activeProjectId = projects[0].id;
+    saveActive();
+  }
+
+  renderTabs();               // show site tabs
+  populateSiteDropdown();     // show in form dropdown
+  refreshDash();
+}
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
@@ -963,6 +979,8 @@ refreshDash();
 </script>
 
 
+
+  
 
 <button id="global-fab" onclick="openForm('Expense')" aria-label="Add Expense">+</button>
 </body>
