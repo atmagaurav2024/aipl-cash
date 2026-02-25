@@ -741,7 +741,7 @@ async function doSubmit() {
   txns.push(entry); saveTxns();
 
   fetch('https://script.google.com/macros/s/AKfycbzQIv2VYZuZcSm3OVHIraK51AYyOuxwiu3OTEcVvaEYJ2wLR9Px8LP8Lxfmrq-apHg1/exec',
-    {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
+    {method:'POST',mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
   ).catch(()=>{});
 
   showToast('✓ Voucher Saved / जतन झाले');
