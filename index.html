@@ -740,7 +740,7 @@ async function doSubmit() {
 
   txns.push(entry); saveTxns();
 
-  fetch(https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec,
+  fetch('https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec',
     {method:'POST',mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
   ).catch(()=>{});
 
