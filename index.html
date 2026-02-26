@@ -757,7 +757,7 @@ renderReports();
   ).catch(()=>{});
 
   showToast('✓ Voucher Saved / जतन झाले');
-  setTimeout(loadTransactions,1500);
+
   btn.disabled = false;
   document.getElementById('btntxt').textContent = 'Submit Voucher / जतन करा';
   document.getElementById('spn').style.display  = 'none';
@@ -982,6 +982,8 @@ async function loadProjects(){
     console.log("Transaction load failed", err);
   }
 }
+
+  setInterval(loadTransactions, 20000);
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
