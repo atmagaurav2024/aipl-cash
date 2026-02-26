@@ -756,6 +756,9 @@ renderReports();
     {method:'POST',mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
   ).catch(()=>{});
 
+  btn.disabled = false;
+document.getElementById('spn').style.display="none";
+
   showToast('✓ Voucher Saved / जतन झाले');
 
   btn.disabled = false;
