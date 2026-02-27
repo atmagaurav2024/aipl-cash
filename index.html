@@ -1005,10 +1005,7 @@ async function loadProjects(){
 // INIT
 // ═══════════════════════════════════════════════
 // Clear any previously saved projects — start fresh
-localStorage.removeItem('aipl_projects');
-localStorage.removeItem('aipl_active_proj');
-projects = [];
-activeProjectId = null;
+
 
 document.getElementById('r-from').value = (()=>{const d=new Date();d.setDate(d.getDate()-6);return d.toISOString().split('T')[0];})();
 document.getElementById('r-to').value   = new Date().toISOString().split('T')[0];
