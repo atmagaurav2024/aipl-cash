@@ -733,7 +733,7 @@ async function doSubmit() {
 
   const entry = {
     id: Date.now(),
-    voucherNumber: 'VC-'+Date.now(),
+    voucherNumber: '',
     date:            document.getElementById('f-date').value,
     voucherType:     type,
     siteName:        document.getElementById('f-site').value,
@@ -752,9 +752,23 @@ txns.unshift(entry);
 refreshDash();
 renderReports();
   
-  fetch('https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec',
-    {method:'POST',mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
-  ).catch(()=>{});
+ try{
+
+  const response = await fetch('https://script.google.com/macros/s/AKfycbwm1bvycHKlOvAMm9QHCI69UsaSZFdEjMw4tv465rCmoVfZhkRcerrIuV_KaIxZ1BO4/exec',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(entry)
+  });
+
+  const result = await response.json();
+
+  showToast("Voucher Saved : " + result.voucher);
+
+}catch(err){
+  showToast("Server not responding",true);
+}
 
   btn.disabled = false;
 document.getElementById('spn').style.display="none";
