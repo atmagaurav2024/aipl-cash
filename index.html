@@ -765,9 +765,9 @@ await fetch('https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mU
   body: formData
 });
 
-  const result = await response.json();
 
-  showToast("Voucher Saved : " + result.voucher);
+
+  showToast('✓ Voucher Saved / जतन झाले');
 await loadTransactions();
 }catch(err){
   showToast("Server not responding",true);
