@@ -622,7 +622,7 @@ async function addProject(){
     return;
   }
 
-  const url = "https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec?action=addProject&name=" 
+  const url = "https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=addProject&name=" 
               + encodeURIComponent(name) +
               "&addr=" + encodeURIComponent(addr);
 
@@ -752,7 +752,7 @@ async function doSubmit() {
  try{
 
 const url =
-"https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec?action=addTxn"
+"https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=addTxn"
 + "&date=" + encodeURIComponent(entry.date)
 + "&voucherType=" + encodeURIComponent(entry.voucherType)
 + "&siteName=" + encodeURIComponent(entry.siteName)
@@ -973,7 +973,7 @@ function scrollActiveTabIntoView(){
 
 async function loadProjects(){
 
-  const res = await fetch("https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec?action=getProjects");
+  const res = await fetch("https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=getProjects");
   const data = await res.json();
 
   projects = data;            // take projects from sheet
@@ -992,7 +992,7 @@ await loadTransactions();
   async function loadTransactions(){
 
   try{
-    const res = await fetch("https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec?action=getTransactions");
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=getTransactions");
     const data = await res.json();
 
     txns = data || [];
