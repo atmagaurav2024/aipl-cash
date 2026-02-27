@@ -979,9 +979,10 @@ async function loadProjects(){
     saveActive();
   }
 
-  renderTabs();               // show site tabs
-  populateSiteDropdown();     // show in form dropdown
-  refreshDash();
+  renderTabs();
+populateSiteDropdown();
+refreshDash();
+await loadTransactions();
 }
   async function loadTransactions(){
 
@@ -1000,7 +1001,11 @@ async function loadProjects(){
   }
 }
 
-  setInterval(loadTransactions, 20000);
+setInterval(async ()=>{
+  await loadTransactions();
+  refreshDash();
+  renderReports();
+},15000);
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
@@ -1010,7 +1015,7 @@ async function loadProjects(){
 document.getElementById('r-from').value = (()=>{const d=new Date();d.setDate(d.getDate()-6);return d.toISOString().split('T')[0];})();
 document.getElementById('r-to').value   = new Date().toISOString().split('T')[0];
 loadProjects();
-loadTransactions();
+
 </script>
 
 
