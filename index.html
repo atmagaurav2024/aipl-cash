@@ -748,22 +748,24 @@ async function doSubmit() {
     submittedAt:     new Date().toISOString()
   };
 
-txns.unshift(entry);
-refreshDash();
-renderReports();
   
  try{
 
-  const formData = new URLSearchParams();
+const url =
+"https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec?action=addTxn"
++ "&date=" + encodeURIComponent(entry.date)
++ "&voucherType=" + encodeURIComponent(entry.voucherType)
++ "&siteName=" + encodeURIComponent(entry.siteName)
++ "&partyName=" + encodeURIComponent(entry.partyName)
++ "&mobile=" + encodeURIComponent(entry.mobile)
++ "&expenseCategory=" + encodeURIComponent(entry.expenseCategory)
++ "&amount=" + encodeURIComponent(entry.amount)
++ "&purpose=" + encodeURIComponent(entry.purpose)
++ "&paymentMode=" + encodeURIComponent(entry.paymentMode)
++ "&latitude=" + encodeURIComponent(entry.latitude)
++ "&longitude=" + encodeURIComponent(entry.longitude);
 
-for (const key in entry){
-  formData.append(key, entry[key]);
-}
-
-await fetch('https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec', {
-  method: 'POST',
-  body: formData
-});
+await fetch(url);
 
 
 
