@@ -765,7 +765,7 @@ renderReports();
   const result = await response.json();
 
   showToast("Voucher Saved : " + result.voucher);
-
+await loadTransactions();
 }catch(err){
   showToast("Server not responding",true);
 }
