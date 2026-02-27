@@ -754,13 +754,16 @@ renderReports();
   
  try{
 
-  const response = await fetch('https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify(entry)
-  });
+  const formData = new URLSearchParams();
+
+for (const key in entry){
+  formData.append(key, entry[key]);
+}
+
+await fetch('https://script.google.com/macros/s/AKfycbxOd6s7JnCWSOkmr4Y8Jt3ss1mUptcgmyY9EaKbw0pL-zi28NXoUOIBm42qEWZqxstM/exec', {
+  method: 'POST',
+  body: formData
+});
 
   const result = await response.json();
 
