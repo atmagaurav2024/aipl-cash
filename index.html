@@ -887,6 +887,30 @@ function renderReports() {
       const cat  = t.expenseCategory||'—';
       const cfg  = CAT[cat]||{e:isIn?'💰':'📦',c:isIn?'#2DAE6A':'#9CA3AF'};
       return `<div class="trow">
+  <div class="tico" style="background:${isIn?'#DCFCE7':cfg.c+'22'}">${isIn?'💰':cfg.e}</div>
+
+  <div class="tinfo">
+    <div class="tparty">${t.partyName||'—'}</div>
+    <div class="tmeta">${isIn?'Payment In':cat} · ${t.paymentMode||''}</div>
+    <div class="tmeta" style="font-size:11px;margin-top:1px">${t.siteName||''}</div>
+    <div class="tmeta" style="font-size:11px;margin-top:1px;color:#6B7280">${t.purpose||''}</div>
+  </div>
+
+  <div>
+    <div class="tamt" style="color:${isIn?'var(--green)':'var(--red)'}">
+      ${isIn?'+':'−'}₹${fmt(t.amount)}
+    </div>
+    <div class="tdate">${fmtDate(t.date)}</div>
+
+    <!-- DELETE BUTTON -->
+    <div style="margin-top:6px;text-align:right">
+      <span onclick="deleteTxn(${t.id})" 
+        style="font-size:12px;color:red;cursor:pointer;font-weight:700">
+        🗑 Delete
+      </span>
+    </div>
+  </div>
+</div>`;
         <div class="tico" style="background:${isIn?'#DCFCE7':cfg.c+'22'}">${isIn?'💰':cfg.e}</div>
         <div class="tinfo">
           <div class="tparty">${t.partyName||'—'}</div>
@@ -1008,12 +1032,42 @@ await loadTransactions();
     console.log("Transaction load failed", err);
   }
 }
+  async function deleteTxn(id){
+
+  const pass = prompt("Enter password to delete:");
+
+  if(pass === null) return; // user cancelled
+
+  if(pass !== "Atmagaurav@143"){
+    showToast("❌ Wrong password", true);
+    return;
+  }
+
+  if(!confirm("Are you sure you want to delete this entry?")) return;
+
+  try{
+
+    const url =
+    "https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=deleteTxn&id=" 
+    + id;
+
+    await fetch(url);
+
+    showToast("🗑 Entry deleted");
+
+    await loadTransactions();
+
+  }catch(err){
+    showToast("Delete failed", true);
+  }
+}
 
 setInterval(async ()=>{
   await loadTransactions();
   refreshDash();
   renderReports();
 },15000);
+
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
