@@ -188,8 +188,8 @@ textarea{resize:none;min-height:85px;line-height:1.5}
 
   <div class="topbar">
     <div style="flex:1">
-      <div style="font-size:22px;font-weight:900;color:var(--text)">Dashboard</div>
-      <div style="font-size:12px;color:var(--text2);font-weight:600;margin-top:1px">Welcome back!</div>
+      <div style="font-size:20px;font-weight:900;color:var(--text)">Atmagaurav Infra Pvt Ltd</div>
+      <div style="font-size:16px;color:var(--text2);font-weight:600;margin-top:1px">Cash Management App!</div>
     </div>
     <div class="topbar-right">
       <div onclick="openManageProjects()" title="Manage Projects" style="cursor:pointer;font-size:22px;color:var(--text2)">⚙</div>
@@ -503,12 +503,12 @@ const CAT = {
 
 let projects = JSON.parse(localStorage.getItem('aipl_projects') || '[]');
 let activeProjectId = parseInt(localStorage.getItem('aipl_active_proj')) || (projects[0]?.id ?? null);
-let txns = JSON.parse(localStorage.getItem('aipl_txns') || '[]');
+let txns = [];
 let repPeriod = 'week';
 let repFrom = null, repTo = null;
 
 function saveProjects() { localStorage.setItem('aipl_projects', JSON.stringify(projects)); }
-function saveTxns()     { localStorage.setItem('aipl_txns', JSON.stringify(txns)); }
+
 function saveActive()   { localStorage.setItem('aipl_active_proj', activeProjectId); }
 
 function activeProject() { return projects.find(p => p.id === activeProjectId) || projects[0]; }
@@ -612,18 +612,28 @@ function selectProjModal(id) {
   renderProjModal(); renderTabs(); refreshDash();
 }
 
-function addProject() {
+async function addProject(){
+
   const name = document.getElementById('new-proj-name').value.trim();
   const addr = document.getElementById('new-proj-addr').value.trim();
-  if (!name) { showToast('Enter project name', true); return; }
-  const id = Date.now();
-  projects.push({ id, name, addr });
-  saveProjects();
-  activeProjectId = id; saveActive();
-  document.getElementById('new-proj-name').value = '';
-  document.getElementById('new-proj-addr').value = '';
-  renderProjModal(); renderTabs(); refreshDash();
-  showToast('✓ Project added');
+
+  if(!name){
+    showToast('Enter project name', true);
+    return;
+  }
+
+  const url = "https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=addProject&name=" 
+              + encodeURIComponent(name) +
+              "&addr=" + encodeURIComponent(addr);
+
+  await fetch(url);
+
+  showToast('✓ Project saved');
+
+  document.getElementById('new-proj-name').value='';
+  document.getElementById('new-proj-addr').value='';
+
+  loadProjects();   // reload from sheet
 }
 
 // ═══════════════════════════════════════════════
@@ -723,7 +733,7 @@ async function doSubmit() {
 
   const entry = {
     id: Date.now(),
-    voucherNumber: 'VC-'+Date.now(),
+    voucherNumber: '',
     date:            document.getElementById('f-date').value,
     voucherType:     type,
     siteName:        document.getElementById('f-site').value,
@@ -738,13 +748,38 @@ async function doSubmit() {
     submittedAt:     new Date().toISOString()
   };
 
-  txns.push(entry); saveTxns();
+  
+ try{
 
-  fetch('https://script.google.com/macros/s/AKfycbzQIv2VYZuZcSm3OVHIraK51AYyOuxwiu3OTEcVvaEYJ2wLR9Px8LP8Lxfmrq-apHg1/exec',
-    {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...entry,photo})}
-  ).catch(()=>{});
+const url =
+"https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=addTxn"
++ "&date=" + encodeURIComponent(entry.date)
++ "&voucherType=" + encodeURIComponent(entry.voucherType)
++ "&siteName=" + encodeURIComponent(entry.siteName)
++ "&partyName=" + encodeURIComponent(entry.partyName)
++ "&mobile=" + encodeURIComponent(entry.mobile)
++ "&expenseCategory=" + encodeURIComponent(entry.expenseCategory)
++ "&amount=" + encodeURIComponent(entry.amount)
++ "&purpose=" + encodeURIComponent(entry.purpose)
++ "&paymentMode=" + encodeURIComponent(entry.paymentMode)
++ "&latitude=" + encodeURIComponent(entry.latitude)
++ "&longitude=" + encodeURIComponent(entry.longitude);
+
+await fetch(url);
+
+
+
+ 
+await loadTransactions();
+}catch(err){
+  showToast("Server not responding",true);
+}
+
+  btn.disabled = false;
+document.getElementById('spn').style.display="none";
 
   showToast('✓ Voucher Saved / जतन झाले');
+
   btn.disabled = false;
   document.getElementById('btntxt').textContent = 'Submit Voucher / जतन करा';
   document.getElementById('spn').style.display  = 'none';
@@ -857,7 +892,6 @@ function renderReports() {
           <div class="tparty">${t.partyName||'—'}</div>
           <div class="tmeta">${isIn?'Payment In':cat} · ${t.paymentMode||''}</div>
           <div class="tmeta" style="font-size:11px;margin-top:1px">${t.siteName||''}</div>
-          ${t.purpose ? `<div class="tmeta" style="font-size:12px;margin-top:4px;color:var(--text);font-weight:600;white-space:normal;line-height:1.4">📝 ${t.purpose}</div>` : ''}
         </div>
         <div>
           <div class="tamt" style="color:${isIn?'var(--green)':'var(--red)'}">${isIn?'+':'−'}₹${fmt(t.amount)}</div>
@@ -937,23 +971,61 @@ function scrollActiveTabIntoView(){
   if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
+async function loadProjects(){
 
+  const res = await fetch("https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=getProjects");
+  const data = await res.json();
+
+  projects = data;            // take projects from sheet
+  saveProjects();
+
+  if(projects.length>0){
+    activeProjectId = projects[0].id;
+    saveActive();
+  }
+
+  renderTabs();
+populateSiteDropdown();
+refreshDash();
+await loadTransactions();
+}
+  async function loadTransactions(){
+
+  try{
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxQc3lC7YuGR1fpIaGEvXE8vyB797Zj6uidIkB1HDSuXtTbjpCWgeFAbxKAZFlmJipo/exec?action=getTransactions");
+    const data = await res.json();
+
+    txns = data || [];
+
+    renderTabs();
+    refreshDash();
+    renderReports();
+
+  }catch(err){
+    console.log("Transaction load failed", err);
+  }
+}
+
+setInterval(async ()=>{
+  await loadTransactions();
+  refreshDash();
+  renderReports();
+},15000);
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
 // Clear any previously saved projects — start fresh
-localStorage.removeItem('aipl_projects');
-localStorage.removeItem('aipl_active_proj');
-projects = [];
-activeProjectId = null;
+
 
 document.getElementById('r-from').value = (()=>{const d=new Date();d.setDate(d.getDate()-6);return d.toISOString().split('T')[0];})();
 document.getElementById('r-to').value   = new Date().toISOString().split('T')[0];
-renderTabs();
-refreshDash();
+loadProjects();
+
 </script>
 
 
+
+  
 
 <button id="global-fab" onclick="openForm('Expense')" aria-label="Add Expense">+</button>
 </body>
