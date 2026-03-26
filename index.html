@@ -891,7 +891,10 @@ function renderReports() {
         <div class="tinfo">
           <div class="tparty">${t.partyName||'—'}</div>
           <div class="tmeta">${isIn?'Payment In':cat} · ${t.paymentMode||''}</div>
-          <div class="tmeta" style="font-size:11px;margin-top:1px">${t.siteName||''}</div>
+<div class="tmeta" style="font-size:11px;margin-top:1px">${t.siteName||''}</div>
+<div class="tmeta" style="font-size:11px;margin-top:1px;color:#6B7280">
+  ${t.purpose || ''}
+</div>
         </div>
         <div>
           <div class="tamt" style="color:${isIn?'var(--green)':'var(--red)'}">${isIn?'+':'−'}₹${fmt(t.amount)}</div>
